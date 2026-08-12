@@ -1,11 +1,14 @@
 ---
-import PostCard from '~/components/blog/PostCard.astro'
 /**
  * /blog — page 1 of the paginated blog index.
  * Pages 2+ live at /blog/page/[page] (see ./page/[page].astro).
  *
- * Layout: filter strip of every category, then a ruled dispatch ledger.
+ * Layout: "Programme" page — a cinema-programme header (showtimes, current
+ * programme), a genre filter strip, and the ScreeningSchedule board (the
+ * signature post-list treatment — a split-flap / arrival-board table showing
+ * each post as a "screening" with screen/title/date/runtime columns).
  */
+import ScreeningSchedule from '~/components/ScreeningSchedule.astro'
 import BaseLayout from '~/layouts/BaseLayout.astro'
 import { getAllCategories, getPublishedPosts, slugifyTag } from '~/lib/blog'
 import { SITE_CONFIG } from '~/lib/config'
@@ -17,12 +20,16 @@ const categories = await getAllCategories()
 const totalPages = Math.max(1, Math.ceil(allPosts.length / PAGE_SIZE))
 const posts = allPosts.slice(0, PAGE_SIZE)
 
+const now = new Date()
+const showtimes = ['14:00', '16:30', '19:00', '21:30']
+const todayShowing = now.getHours() >= 21 ? showtimes[3] : now.getHours() >= 19 ? showtimes[2] : now.getHours() >= 16 ? showtimes[1] : showtimes[0]
+
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Blog',
-  name: `Blog — ${SITE_CONFIG.title}`,
+  name: `Programme — ${SITE_CONFIG.title}`,
   url: new URL('/blog/', SITE_CONFIG.url).toString(),
-  description: 'Writing on software, AI agents, finance tooling, and the tools I build at oriz.in.',
+  description: 'Film, TV, streaming, and pop culture reviews and rankings.',
   author: {
     '@type': 'Person',
     name: SITE_CONFIG.author.name,
@@ -32,104 +39,128 @@ const jsonLd = {
 ---
 
 <BaseLayout
-  title="Blog"
-  description="Writing on software, AI agents, finance tooling, and the tools I build."
+  title="Programme"
+  description="Film, TV, streaming, and pop culture reviews and rankings."
   jsonLd={jsonLd}
 >
   <div class="container-page section">
-    <header class="blog-head">
-      <p class="blog-kicker mono">The desk</p>
-      <h1>Blog</h1>
-      <p class="blog-lede">
-        Writing on software, AI agents, finance tooling, and the tools I build.
+    <header class="prog-head">
+      <div class="prog-meta mono">
+        <span class="prog-now">Now on</span>
+        <span class="prog-sep" aria-hidden="true">·</span>
+        <span class="prog-time">Next showing: <b>{todayShowing}</b></span>
+        <span class="prog-sep" aria-hidden="true">·</span>
+        <span>{allPosts.length} features on the bill</span>
+      </div>
+      <h1>Programme</h1>
+      <p class="prog-lede">
+        Reviews, ranked lists, and honest post-mortems — film, TV, streaming, and pop culture.
       </p>
+      <hr class="bulb-strip bulb-strip--sm" aria-hidden="true" />
     </header>
 
     {categories.length > 0 && (
-      <nav class="desk-strip mono" aria-label="Filter posts by category">
-        <a class="desk is-active" href="/blog/">All</a>
+      <nav class="genre-strip mono" aria-label="Filter by genre">
+        <a class="genre-chip is-active" href="/blog/">All genres</a>
         {categories.map((c) => (
-          <a class="desk" href={`/categories/${slugifyTag(c)}/`}>{c}</a>
+          <a class="genre-chip" href={`/categories/${slugifyTag(c)}/`}>{c}</a>
         ))}
       </nav>
     )}
 
     {posts.length === 0 ? (
-      <p class="muted">No posts yet — the first one drops shortly.</p>
+      <p class="muted">No features on the bill yet — the first one drops shortly.</p>
     ) : (
-      <ul class="post-list">
-        {posts.map((p) => (
-          <li>
-            <PostCard post={p} />
-          </li>
-        ))}
-      </ul>
+      <ScreeningSchedule posts={posts} />
     )}
 
     {totalPages > 1 && (
       <nav class="pager mono" aria-label="Pagination">
         <span class="pager-info">Page 1 of {totalPages}</span>
-        <a class="pager-link" href="/blog/page/2/" rel="next">Next →</a>
+        <a class="pager-link" href="/blog/page/2/" rel="next">Next programme →</a>
       </nav>
     )}
   </div>
 </BaseLayout>
 
 <style>
-  .container-page { max-width: 820px; }
-  .blog-head {
-    padding-block: clamp(2rem, 5vw, 3rem) 1.25rem;
-  }
-  .blog-kicker {
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin: 0 0 0.75rem;
-  }
-  .blog-head h1 {
-    font-family: var(--font-display);
-    font-size: clamp(2.25rem, 6vw, 3.25rem);
-    font-weight: 600;
-    letter-spacing: -0.022em;
-    line-height: 1.04;
-    margin: 0;
-  }
-  .blog-lede {
-    color: var(--ink-mute);
-    font-family: var(--font-display);
-    font-size: 1.125rem;
-    margin: 0.75rem 0 0;
-    max-width: 60ch;
-  }
-  .desk-strip {
+  .container-page { max-width: 900px; }
+  .section { padding-block: 0 3rem; }
+
+  /* ── Programme header ────────────────────────────────────────────── */
+  .prog-head { padding-block: clamp(2rem, 5vw, 3rem) 1.5rem; }
+
+  .prog-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.375rem 1rem;
-    margin-bottom: 0.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid var(--ink);
+    align-items: center;
+    gap: 0.5rem;
     font-size: 11px;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 0.875rem;
+  }
+  .prog-now { color: var(--marquee-neon, var(--accent)); font-weight: 600; }
+  .prog-sep { color: var(--rule-strong, var(--rule)); }
+  .prog-time b { color: var(--marquee-bulb, var(--accent)); }
+
+  .prog-head h1 {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 9vw, 5.5rem);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    line-height: 0.92;
+    margin: 0 0 0.75rem;
+  }
+  .prog-lede {
+    color: var(--ink-mute);
+    font-family: var(--font-serif);
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    margin: 0 0 1.25rem;
+    max-width: 60ch;
+  }
+
+  /* bulb-strip signature — small variant */
+  .bulb-strip--sm {
+    height: 6px;
+    border: none;
+    background-image: radial-gradient(circle, var(--marquee-bulb, var(--accent)) 0 1.5px, transparent 2px);
+    background-size: 14px 6px;
+    background-position: 0 50%;
+    opacity: 0.7;
+    margin: 0 0 1.5rem;
+  }
+
+  /* ── Genre filter strip ──────────────────────────────────────────── */
+  .genre-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin-bottom: 1.25rem;
+    font-size: 10px;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
   }
-  .desk {
+  .genre-chip {
+    padding: 0.25rem 0.65rem;
+    border: 1px solid color-mix(in oklab, var(--marquee-bulb, var(--accent)) 22%, var(--rule));
+    border-radius: 4px;
+    background: color-mix(in oklab, var(--paper-2) 80%, transparent);
     color: var(--ink-mute);
     text-decoration: none;
-    padding-bottom: 2px;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1rem;
+    white-space: nowrap;
+    transition: color var(--dur-fast, 120ms) ease, border-color var(--dur-fast, 120ms) ease;
   }
-  .desk:hover { color: var(--accent); }
-  .desk.is-active { color: var(--accent); border-bottom-color: var(--accent); }
-  .post-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .genre-chip:hover { color: var(--marquee-bulb, var(--accent)); border-color: color-mix(in oklab, var(--marquee-bulb, var(--accent)) 55%, transparent); }
+  .genre-chip.is-active {
+    color: var(--marquee-night, #14101f);
+    background: var(--marquee-bulb, var(--accent));
+    border-color: var(--marquee-bulb, var(--accent));
   }
-  .post-list > li:last-child :global(.post-card) {
-    border-bottom: 1px solid var(--rule);
-  }
+
+  /* ── Pagination ──────────────────────────────────────────────────── */
   .pager {
     margin-top: 2rem;
     display: flex;
@@ -138,22 +169,21 @@ const jsonLd = {
     gap: 1rem;
     padding-top: 1.5rem;
     border-top: 1px solid var(--rule);
-    font-size: 12px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
   }
-  .pager-info {
-    color: var(--ink-mute);
-    letter-spacing: 0.06em;
-  }
+  .pager-info { color: var(--ink-mute); }
   .pager-link {
     padding: 0.5rem 0.875rem;
-    border: 1px solid var(--rule);
-    letter-spacing: 0.08em;
+    border: 1px solid color-mix(in oklab, var(--marquee-bulb, var(--accent)) 35%, var(--rule));
     text-transform: uppercase;
     font-size: 11px;
     text-decoration: none;
     color: var(--ink);
+    border-radius: 4px;
+    transition: border-color var(--dur-fast, 120ms) ease, color var(--dur-fast, 120ms) ease;
   }
-  .pager-link:hover { border-color: var(--accent); color: var(--accent); }
+  .pager-link:hover { border-color: var(--marquee-bulb, var(--accent)); color: var(--marquee-bulb, var(--accent)); }
+
   .muted { color: var(--ink-mute); }
-  .section { padding-block: 0 3rem; }
 </style>

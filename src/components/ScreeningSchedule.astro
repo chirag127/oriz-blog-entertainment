@@ -1,0 +1,221 @@
+---
+/**
+ * ScreeningSchedule — the signature MARQUEE component.
+ *
+ * Renders recent posts as a cinema programme board: a black split-flap /
+ * arrival-board style table where each row is a "screening", with house
+ * (category), title, runtime (reading time), and screen (vertical).
+ * Pure CSS, no JS, reduced-motion-safe.
+ *
+ * Used on the /blog/ listing as the primary post-list treatment — replacing
+ * the generic card grid every sibling uses.
+ */
+import type { CollectionEntry } from 'astro:content'
+import { formatPostDate, postVertical, readingTimeFor, verticalLabel } from '~/lib/blog'
+
+interface Props {
+  posts: CollectionEntry<'blog'>[]
+}
+
+const { posts } = Astro.props
+---
+
+<div class="schedule" role="table" aria-label="Screening schedule">
+  <div class="sch-head" role="rowgroup">
+    <div class="sch-row sch-header" role="row" aria-hidden="true">
+      <span class="sch-col sch-col--screen" role="columnheader">Screen</span>
+      <span class="sch-col sch-col--title" role="columnheader">Feature</span>
+      <span class="sch-col sch-col--time" role="columnheader">Date</span>
+      <span class="sch-col sch-col--runtime" role="columnheader">Runtime</span>
+    </div>
+  </div>
+  <div class="sch-body" role="rowgroup">
+    {posts.map((post) => {
+      const v = postVertical(post)
+      const rt = post.data.readingTime ?? readingTimeFor(post)
+      const date = formatPostDate(post.data.pubDate)
+      return (
+        <a class="sch-row sch-entry" href={`/blog/${post.id}`} role="row" data-vertical={v}>
+          <span class="sch-col sch-col--screen" role="cell">
+            <span class="sch-dot" aria-hidden="true"></span>
+            <span class="sch-vname">{verticalLabel(v)}</span>
+            <span class="sch-cat">{post.data.category}</span>
+          </span>
+          <span class="sch-col sch-col--title" role="cell">
+            <span class="sch-title">{post.data.title}</span>
+            {post.data.description && (
+              <span class="sch-dek">{post.data.description}</span>
+            )}
+          </span>
+          <span class="sch-col sch-col--time" role="cell">
+            <time class="sch-date" datetime={post.data.pubDate.toISOString()}>{date}</time>
+          </span>
+          <span class="sch-col sch-col--runtime" role="cell">
+            <span class="sch-rt">{rt}</span>
+          </span>
+        </a>
+      )
+    })}
+  </div>
+</div>
+
+<style>
+  .schedule {
+    width: 100%;
+    border: 1px solid var(--rule-strong, var(--rule));
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    font-family: var(--font-mono);
+    background: var(--paper-2);
+  }
+
+  /* ── Header row ──────────────────────────────────────────────────── */
+  .sch-header {
+    background: color-mix(in oklab, var(--marquee-bulb, var(--accent)) 18%, var(--paper-2));
+    border-bottom: 2px solid color-mix(in oklab, var(--marquee-bulb, var(--accent)) 50%, var(--rule));
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    padding-block: 0.5rem;
+    cursor: default;
+  }
+  .sch-header .sch-col--title { color: color-mix(in oklab, var(--marquee-bulb, var(--accent)) 80%, var(--ink-mute)); }
+
+  /* ── Shared row layout ───────────────────────────────────────────── */
+  .sch-row {
+    display: grid;
+    grid-template-columns: 130px 1fr 100px 72px;
+    gap: 0.75rem;
+    align-items: start;
+    padding: 0.875rem 1rem;
+    text-decoration: none;
+    color: var(--ink);
+    border-bottom: 1px solid var(--rule);
+  }
+  .sch-row:last-child { border-bottom: none; }
+
+  /* ── Entry hover — the marquee HIGHLIGHT ────────────────────────── */
+  .sch-entry {
+    --v: var(--v-personal);
+    transition: background var(--dur-fast, 120ms) ease;
+    cursor: pointer;
+    position: relative;
+  }
+  .sch-entry[data-vertical='dev'] { --v: var(--v-dev); }
+  .sch-entry[data-vertical='finance'] { --v: var(--v-finance); }
+  .sch-entry[data-vertical='culture'] { --v: var(--v-culture); }
+  .sch-entry[data-vertical='health'] { --v: var(--v-health); }
+
+  .sch-entry::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: transparent;
+    transition: background var(--dur-fast, 120ms) ease;
+  }
+  .sch-entry:hover { background: color-mix(in oklab, var(--v) 8%, var(--paper-2)); }
+  .sch-entry:hover::before { background: var(--v); }
+  .sch-entry:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+  /* ── Screen column ───────────────────────────────────────────────── */
+  .sch-col--screen {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding-left: 0.25rem;
+  }
+  .sch-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: var(--v, var(--accent));
+    border-radius: 50%;
+    margin-bottom: 0.25rem;
+    box-shadow: 0 0 5px color-mix(in oklab, var(--v, var(--accent)) 70%, transparent);
+    flex-shrink: 0;
+  }
+  .sch-vname {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--v, var(--accent));
+    font-weight: 600;
+    line-height: 1;
+  }
+  .sch-cat {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    line-height: 1.2;
+  }
+
+  /* ── Title column ────────────────────────────────────────────────── */
+  .sch-col--title {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .sch-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.0625rem, 1.6vw, 1.25rem);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    line-height: 1.05;
+    color: var(--ink);
+    transition: color var(--dur-fast, 120ms) ease;
+  }
+  .sch-entry:hover .sch-title { color: var(--marquee-bulb, var(--accent)); }
+  .sch-dek {
+    font-family: var(--font-serif);
+    font-size: 0.875rem;
+    color: var(--ink-mute);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+  }
+
+  /* ── Date + Runtime ──────────────────────────────────────────────── */
+  .sch-date, .sch-rt {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--ink-mute);
+    line-height: 1.4;
+  }
+  .sch-col--time, .sch-col--runtime { padding-top: 0.125rem; }
+
+  /* ── Responsive collapse ─────────────────────────────────────────── */
+  @media (max-width: 720px) {
+    .sch-row {
+      grid-template-columns: 90px 1fr 80px;
+      grid-template-areas: 'screen title time' 'screen title runtime';
+    }
+    .sch-col--screen { grid-area: screen; }
+    .sch-col--title { grid-area: title; }
+    .sch-col--time { grid-area: time; text-align: right; }
+    .sch-col--runtime { grid-area: runtime; text-align: right; }
+    .sch-header .sch-col--runtime { display: none; }
+  }
+  @media (max-width: 480px) {
+    .sch-row {
+      grid-template-columns: 1fr auto;
+      grid-template-areas: 'screen time' 'title title' 'runtime runtime';
+      gap: 0.375rem;
+      padding: 0.75rem 0.875rem;
+    }
+    .sch-col--screen { flex-direction: row; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .sch-dot { margin-bottom: 0; }
+    .sch-header { display: none; }
+    .sch-dek { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sch-entry, .sch-entry::before, .sch-title { transition: none; }
+  }
+</style>
