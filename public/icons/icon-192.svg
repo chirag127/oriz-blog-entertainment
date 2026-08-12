@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <title>Marquee</title>
+  <rect width="192" height="192" rx="40" fill="#14101f"/>
+  <rect x="28" y="44" width="136" height="104" rx="16" fill="none" stroke="#322a47" stroke-width="6"/>
+  <g fill="#ffc53d">
+    <circle cx="48" cy="44" r="7.5"/>
+    <circle cx="80" cy="44" r="7.5"/>
+    <circle cx="112" cy="44" r="7.5"/>
+    <circle cx="144" cy="44" r="7.5"/>
+  </g>
+  <text x="96" y="132" font-family="Arial Narrow, system-ui" font-size="86" font-weight="900" fill="#ff3d8b" text-anchor="middle">M</text>
+</svg>

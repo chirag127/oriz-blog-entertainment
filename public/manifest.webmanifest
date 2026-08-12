@@ -1,0 +1,27 @@
+{
+  "name": "Marquee — film, TV & pop culture",
+  "short_name": "Marquee",
+  "description": "Reviews, ranked lists, and honest post-mortems on film, TV, streaming, and pop culture.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#14101f",
+  "theme_color": "#14101f",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["entertainment", "news", "lifestyle"],
+  "lang": "en"
+}

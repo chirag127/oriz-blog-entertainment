@@ -1,0 +1,84 @@
+---
+/*
+ * Wordmark — "MARQUEE" set in condensed poster display (Anton), with a
+ * glowing marquee-bulb dot standing in for the theatre lights that frame a
+ * cinema one-sheet. This is the entertainment-blog brand mark — its own
+ * identity, distinct from the sister oriz sites.
+ */
+
+interface Props {
+  /** Sub-section name — rendered after the mark. */
+  subtitle?: string
+  /** Display size in CSS pixels. */
+  size?: number
+  /** Wrap the mark in an <a href="/"> — defaults to '/' when subtitle is set. */
+  href?: string | null
+  /** Render as <h1> (the masthead) rather than <div>. */
+  asHeading?: boolean
+}
+
+const { subtitle, size = 96, href = null, asHeading = false } = Astro.props
+const Tag = asHeading ? 'h1' : ('div' as const)
+---
+
+{
+  href ? (
+    <a class="wordmark-link" href={href} aria-label={subtitle ? `Marquee — ${subtitle}` : 'Marquee'}>
+      <Tag class="wordmark" style={`--wm-size: ${size}px;`}>
+        <span class="wm-bulb" aria-hidden="true" />
+        <span class="wm-name">MARQUEE</span>
+        {subtitle && <span class="wm-sub">{subtitle}</span>}
+      </Tag>
+    </a>
+  ) : (
+    <Tag class="wordmark" style={`--wm-size: ${size}px;`}>
+      <span class="wm-bulb" aria-hidden="true" />
+      <span class="wm-name">MARQUEE</span>
+      {subtitle && <span class="wm-sub">{subtitle}</span>}
+    </Tag>
+  )
+}
+
+<style>
+  .wordmark-link {
+    display: inline-block;
+    color: inherit;
+    text-decoration: none;
+  }
+  .wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: var(--wm-size, 96px);
+    line-height: 1;
+    color: var(--ink);
+  }
+  .wm-bulb {
+    width: 0.42em;
+    height: 0.42em;
+    border-radius: 999px;
+    background: var(--marquee-bulb);
+    box-shadow:
+      0 0 6px color-mix(in oklab, var(--marquee-bulb) 80%, transparent),
+      0 0 14px color-mix(in oklab, var(--marquee-bulb) 45%, transparent);
+    flex: 0 0 auto;
+  }
+  .wm-name {
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .wm-sub {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.42em;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--marquee-neon);
+    align-self: center;
+    padding-left: 0.1em;
+  }
+</style>

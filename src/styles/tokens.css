@@ -1,0 +1,283 @@
+/*
+ * tokens.css — "MARQUEE" identity for entertainment-blog.oriz.in.
+ *
+ * Grounded in the material world of the cinema-house: theatre-dark curtain
+ * (aubergine-black), the glowing marquee-bulb gold that frames every
+ * one-sheet, and a single electric premiere magenta held in reserve. This is
+ * NOT the oriz-blog "Signal Press" amber/serif newspaper — it is a midnight
+ * movie-house: purple-velvet night, condensed poster display type, rounded
+ * marquee frames.
+ *
+ * Every --color-* alias is kept so chrome/legal/Footer components (which read
+ * the shell token names) compile unchanged. Theme modes:
+ *   :root                              → night (default, dark)
+ *   [data-theme="light"] / system-light→ daylight matinee variant
+ *   [data-theme="dark"]                → night, always
+ *   [data-theme="sepia"]               → warm reel / vintage variant
+ *   [data-theme="hc"]                  → high contrast
+ */
+:root {
+  color-scheme: dark;
+
+  /* ── MARQUEE palette (theatre night) ──────────────────────────────────
+     marquee-night   #14101F  theatre-dark aubergine-black (page)
+     marquee-velvet  #1E1830  elevated curtain panel (surface)
+     marquee-bulb    #FFC53D  glowing marquee-bulb gold (primary accent)
+     marquee-neon    #FF3D8B  electric premiere magenta (the one risk accent)
+     marquee-ink     #F5EEFF  moonlit near-white text
+     marquee-haze    #A99EC4  muted lavender-grey (secondary text) */
+  --marquee-night: #14101f;
+  --marquee-velvet: #1e1830;
+  --marquee-bulb: #ffc53d;
+  --marquee-neon: #ff3d8b;
+  --marquee-ink: #f5eeff;
+  --marquee-haze: #a99ec4;
+
+  --brand: var(--marquee-bulb); /* primary — links, active, marquee bulbs */
+  --brand-soft: #2b2140; /* deep velvet tint — hover, chips */
+  --success: #4ade80;
+  --danger-color: #ff6b81;
+
+  --paper: var(--marquee-night);
+  --paper-2: var(--marquee-velvet);
+  --surface: var(--paper-2);
+  --ink: var(--marquee-ink);
+  --ink-mute: var(--marquee-haze);
+  --rule: #322a47; /* soft velvet hairline */
+  --rule-strong: #47395f; /* heavier marquee rule */
+
+  /* canonical accent — everything routes through --accent. */
+  --accent: var(--brand);
+  --accent-soft: var(--brand-soft);
+  --cobalt: var(--accent); /* back-compat alias */
+  --brand-tint: var(--brand-soft);
+  --sage: var(--success);
+  --vermilion: var(--danger-color);
+  --highlighter: var(--marquee-neon);
+
+  /* content-vertical marker colours — cinema-program desks.
+     Screen · Music · Games · Fandom · Culture. */
+  --v-dev: #ff3d8b; /* Screen  → premiere magenta */
+  --v-finance: #ffc53d; /* Music   → bulb gold */
+  --v-culture: #b98bff; /* Culture → violet spotlight */
+  --v-health: #4ad6ff; /* Games   → arcade cyan */
+  --v-personal: #a99ec4; /* Fandom  → haze */
+
+  /* semantic passthroughs */
+  --color-bg: var(--paper);
+  --color-fg: var(--ink);
+  --color-accent: var(--brand);
+  --color-accent-fg: #14101f;
+  --color-sage: var(--success);
+  --color-muted: var(--ink-mute);
+  --color-border: var(--rule);
+  --color-bg-soft: var(--paper-2);
+  --color-bg-muted: var(--paper-2);
+  --color-prose: var(--ink);
+  --color-fg-muted: var(--ink-mute);
+  --color-fg-soft: var(--ink-mute);
+
+  /* color alias layer (chrome components read these) */
+  --color-brand-indigo: var(--brand);
+  --color-brand-indigo-soft: var(--brand-soft);
+  --color-brand-success: var(--success);
+  --color-brand-danger: var(--danger-color);
+  --color-neutral-0: #14101f;
+  --color-neutral-50: #1e1830;
+  --color-neutral-100: #261e3a;
+  --color-neutral-200: #322a47;
+  --color-neutral-300: #47395f;
+  --color-neutral-500: #a99ec4;
+  --color-neutral-700: #cabfe0;
+  --color-neutral-900: #f5eeff;
+  --color-neutral-1000: #ffffff;
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-ink: var(--ink);
+  --color-ink-mute: var(--ink-mute);
+  --color-rule: var(--rule);
+
+  /* ── type ─────────────────────────────────────────────────────────────
+     Font families declared once, in global.css @theme. Not duplicated here.
+     ───────────────────────────────────────────────────────────────────── */
+
+  --text-2xs: 10px;
+  --text-xs: 11px;
+  --text-sm: 13px;
+  --text-base: 15px;
+  --text-md: 17px;
+  --text-lg: 20px;
+  --text-xl: 24px;
+  --text-2xl: 32px;
+  --text-3xl: 48px;
+
+  /* spacing — 8 steps */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* motion — 3 durations + 3 easings */
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 360ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* breakpoints */
+  --bp-sm: 480px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1440px;
+
+  /* radii + containers — rounded marquee frames (break from newspaper 0px) */
+  --radius-card: 12px;
+  --radius-button: 8px;
+  --container-page: 1100px;
+
+  /* marquee-bulb glow — the signature. */
+  --bulb-glow: 0 0 6px color-mix(in oklab, var(--marquee-bulb) 70%, transparent);
+}
+
+/* ── DAYLIGHT MATINEE — system-light, unless user forced dark ─────────── */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    color-scheme: light;
+    --paper: #f7f2ea; /* warm lobby wall */
+    --paper-2: #efe6d8;
+    --ink: #1c1330; /* deep aubergine ink */
+    --ink-mute: #6b5f80;
+    --rule: #e0d3bf;
+    --rule-strong: #cdbca2;
+    --brand: #b2560a; /* darkened bulb — AA on lobby wall */
+    --brand-soft: #f4e3cf;
+    --marquee-bulb: #b2560a;
+    --marquee-neon: #c81e63;
+    --highlighter: #c81e63;
+    --v-dev: #c81e63;
+    --v-finance: #b2560a;
+    --v-culture: #7a3fd0;
+    --v-health: #0b7ea6;
+    --v-personal: #6b5f80;
+    --color-accent-fg: #f7f2ea;
+    --color-neutral-50: #efe6d8;
+    --color-neutral-100: #e6dac8;
+    --color-neutral-200: #e0d3bf;
+    --color-neutral-500: #6b5f80;
+    --color-neutral-700: #453758;
+    --color-neutral-900: #1c1330;
+    --bulb-glow: 0 0 4px color-mix(in oklab, #b2560a 40%, transparent);
+  }
+}
+
+/* ── DAYLIGHT — explicit user override ────────────────────────────────── */
+:root[data-theme='light'] {
+  color-scheme: light;
+  --paper: #f7f2ea;
+  --paper-2: #efe6d8;
+  --ink: #1c1330;
+  --ink-mute: #6b5f80;
+  --rule: #e0d3bf;
+  --rule-strong: #cdbca2;
+  --brand: #b2560a;
+  --brand-soft: #f4e3cf;
+  --marquee-bulb: #b2560a;
+  --marquee-neon: #c81e63;
+  --highlighter: #c81e63;
+  --v-dev: #c81e63;
+  --v-finance: #b2560a;
+  --v-culture: #7a3fd0;
+  --v-health: #0b7ea6;
+  --v-personal: #6b5f80;
+  --color-accent-fg: #f7f2ea;
+  --color-neutral-50: #efe6d8;
+  --color-neutral-100: #e6dac8;
+  --color-neutral-200: #e0d3bf;
+  --color-neutral-500: #6b5f80;
+  --color-neutral-700: #453758;
+  --color-neutral-900: #1c1330;
+  --bulb-glow: 0 0 4px color-mix(in oklab, #b2560a 40%, transparent);
+}
+
+/* ── NIGHT — explicit override, wins over system-light ────────────────── */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --paper: #14101f;
+  --paper-2: #1e1830;
+  --ink: #f5eeff;
+  --ink-mute: #a99ec4;
+  --rule: #322a47;
+  --rule-strong: #47395f;
+  --brand: #ffc53d;
+  --brand-soft: #2b2140;
+  --marquee-bulb: #ffc53d;
+  --marquee-neon: #ff3d8b;
+  --highlighter: #ff3d8b;
+  --v-dev: #ff3d8b;
+  --v-finance: #ffc53d;
+  --v-culture: #b98bff;
+  --v-health: #4ad6ff;
+  --v-personal: #a99ec4;
+  --color-accent-fg: #14101f;
+  --color-neutral-50: #1e1830;
+  --color-neutral-100: #261e3a;
+  --color-neutral-200: #322a47;
+  --color-neutral-500: #a99ec4;
+  --color-neutral-700: #cabfe0;
+  --color-neutral-900: #f5eeff;
+  --bulb-glow: 0 0 6px color-mix(in oklab, #ffc53d 70%, transparent);
+}
+
+/* ── VINTAGE REEL — warm sepia film-stock variant ─────────────────────── */
+:root[data-theme='sepia'] {
+  color-scheme: light;
+  --brand: #a8480a;
+  --brand-soft: #f0dcc4;
+  --marquee-bulb: #a8480a;
+  --marquee-neon: #b32259;
+  --highlighter: #b32259;
+  --paper: #f3e7d2;
+  --paper-2: #ecdcc2;
+  --ink: #3a2a1c;
+  --ink-mute: #7d6a52;
+  --rule: #ddc9a8;
+  --color-accent-fg: #f3e7d2;
+  --color-fg-soft: color-mix(in oklab, var(--ink) 55%, var(--paper));
+  --color-neutral-50: #ecdcc2;
+  --color-neutral-100: #e4d0b2;
+  --color-neutral-200: #ddc9a8;
+  --color-neutral-500: #7d6a52;
+  --color-neutral-700: #5a4632;
+  --color-neutral-900: #3a2a1c;
+  --bulb-glow: 0 0 4px color-mix(in oklab, #a8480a 40%, transparent);
+}
+
+/* ── HIGH-CONTRAST — pure black/white, hard borders ───────────────────── */
+:root[data-theme='hc'] {
+  color-scheme: light;
+  --brand: #9a0048;
+  --brand-soft: #ffd9e8;
+  --marquee-bulb: #9a0048;
+  --marquee-neon: #9a0048;
+  --highlighter: #9a0048;
+  --paper: #ffffff;
+  --paper-2: #ffffff;
+  --ink: #000000;
+  --ink-mute: #2a2a35;
+  --rule: #000000;
+  --rule-strong: #000000;
+  --color-accent-fg: #ffffff;
+  --color-fg-soft: #2a2a35;
+  --color-neutral-50: #ffffff;
+  --color-neutral-100: #ffffff;
+  --color-neutral-200: #000000;
+  --color-neutral-500: #2a2a35;
+  --color-neutral-700: #000000;
+  --color-neutral-900: #000000;
+  --bulb-glow: none;
+}
